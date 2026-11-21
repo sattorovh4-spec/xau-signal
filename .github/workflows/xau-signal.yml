@@ -39,7 +39,10 @@ jobs:
             date +%s > .heartbeat
           fi
           if [ -n "$(git status --porcelain)" ]; then
-            git add state.json .heartbeat 2>/dev/null || true
-            git commit -m "state update [skip ci]"
-            git push
+            git add .heartbeat
+            if [ -f state.json ]; then git add state.json; fi
+            if ! git diff --cached --quiet; then
+              git commit -m "state update [skip ci]"
+              git push
+            fi
           fi
