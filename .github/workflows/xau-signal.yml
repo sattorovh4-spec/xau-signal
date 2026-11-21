@@ -3,7 +3,11 @@ name: XAUUSD signal scan
 on:
   schedule:
     - cron: '*/5 * * * *'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'scan / test / debug'
+        default: 'scan'
 
 concurrency:
   group: xau-signal
@@ -28,7 +32,14 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           XAU_STATE: ${{ github.workspace }}/state.json
-        run: python xau_signal.py
+        run: |
+          if [ "${{ inputs.mode }}" = "test" ]; then
+            python xau_signal.py --test
+          elif [ "${{ inputs.mode }}" = "debug" ]; then
+            python xau_signal.py --debug
+          else
+            python xau_signal.py
+          fi
 
       - name: Persist state / keepalive
         run: |
