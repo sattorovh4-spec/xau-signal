@@ -2,6 +2,7 @@ name: XAUUSD signal scan
 
 on:
   schedule:
+    # cron перезарегистрирован после повторного включения workflow
     - cron: '*/5 * * * *'
   workflow_dispatch:
     inputs:
